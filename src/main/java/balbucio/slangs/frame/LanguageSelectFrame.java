@@ -4,6 +4,7 @@ import balbucio.slangs.LanguageSelector;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Vector;
 
 public class LanguageSelectFrame extends JFrame {
 
@@ -21,7 +22,8 @@ public class LanguageSelectFrame extends JFrame {
         BoxLayout layout = new BoxLayout(panel, BoxLayout.Y_AXIS);
         panel.setLayout(layout);
         this.title = new JLabel("Lang[lang_title]");
-        this.box = new JComboBox<>();
+        this.box = new JComboBox<>(new Vector<>(languageSelector.getLanguageNames()));
         this.add(panel, new GridBagConstraints());
+        this.setVisible(true);
     }
 }

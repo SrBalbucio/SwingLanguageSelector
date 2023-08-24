@@ -2,9 +2,8 @@ package balbucio.slangs;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Scanner;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import balbucio.slangs.model.Language;
@@ -40,6 +39,12 @@ public class LanguageSelector {
 
     public void addFrame(JFrame component) {
         addComponent(component);
+    }
+
+    public java.util.List<String> getLanguageNames(){
+        java.util.List<String> values = new ArrayList<>();
+        loadedLanguages.forEach(l -> values.add(l.getName()));
+        return values;
     }
 
     public Language getLanguage(String id) {
