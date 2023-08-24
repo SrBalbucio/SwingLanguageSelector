@@ -19,11 +19,16 @@ public class TestFrame {
         panel.add(new JLabel("Lang[first_line]"));
         panel.add(new JLabel("Lang[second_line]"));
         panel.add(new JButton("Lang[first_button]"));
+        JButton b = new JButton("Lang[select]");
+        b.addActionListener(e -> languageSelector.openSelectorFrame());
+        panel.add(b);
         panel.add(new JCheckBox("Lang[checkbox]"));
         panel.add(new JComboBox<String>(new Vector<>(Arrays.asList("Teste 1","Teste 2", "Teste 3"))));
         frame.add(panel, new GridBagConstraints());
-        languageSelector.addComponent(frame);
         frame.setVisible(true);
+        SwingUtilities.invokeLater(() -> {
+            languageSelector.addFrame(frame);
+        });
 
     }
 }

@@ -17,6 +17,7 @@ public class Language {
     private JSONObject json;
 
     public Language(String path){
+        this.path = path;
         preLoad(new JSONObject(getBuilder().toString()));
     }
 
@@ -37,8 +38,8 @@ public class Language {
     }
 
     private void preLoad(JSONObject json){
-        this.name = json.optString(LanguageSelector.getKey("lang_name"), "Invalid language name");
-        this.id = json.optString(LanguageSelector.getKey("lang_id"), "Invalid language id");
+        this.name = json.optString("lang_name", "Invalid language name");
+        this.id = json.optString("lang_id", "Invalid language id");
     }
 
     public void load(){

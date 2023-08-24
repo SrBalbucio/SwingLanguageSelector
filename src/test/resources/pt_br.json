@@ -1,9 +1,11 @@
 {
   "lang_id": "PT-BR",
   "lang_name": "Português Brasileiro",
-  "lang_title": "Selecione um idioma",
+  "lang_title": "Selecione um idioma:",
+  "lang_selectbutton": "Selecionar",
   "first_line": "Olá mundo",
   "second_line": "Eu sou um app",
   "first_button": "Eu sou um button",
-  "checkbox": "Escolha checar"
+  "checkbox": "Escolha checar",
+  "select": "escolher lang"
 }

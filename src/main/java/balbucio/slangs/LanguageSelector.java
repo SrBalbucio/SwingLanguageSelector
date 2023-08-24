@@ -2,10 +2,13 @@ package balbucio.slangs;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import balbucio.slangs.frame.LanguageSelectFrame;
 import balbucio.slangs.model.Language;
 import org.json.JSONObject;
 
@@ -19,12 +22,18 @@ public class LanguageSelector {
         this.languageSelected = languageSelected;
     }
 
+    public LanguageSelectFrame openSelectorFrame(){
+        return new LanguageSelectFrame(this);
+    }
+
     public void setLanguage(String langId){
         this.languageSelected = langId;
+        checkAndUpdate();
     }
 
     public void addLanguage(String path){
         loadedLanguages.add(new Language(path));
+        checkAndUpdate();
     }
 
     public void addLanguage(JSONObject json) {
@@ -38,6 +47,12 @@ public class LanguageSelector {
     }
 
     public void addFrame(JFrame component) {
+        component.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentShown(ComponentEvent e) {
+                checkAndUpdate();
+            }
+        });
         addComponent(component);
     }
 
@@ -45,6 +60,12 @@ public class LanguageSelector {
         java.util.List<String> values = new ArrayList<>();
         loadedLanguages.forEach(l -> values.add(l.getName()));
         return values;
+    }
+
+    public Language getLanguageByName(String name){
+        return loadedLanguages.stream()
+                .filter(l -> l.getName().equalsIgnoreCase(name))
+                .findFirst().orElse(null);
     }
 
     public Language getLanguage(String id) {
@@ -94,26 +115,28 @@ public class LanguageSelector {
             Arrays.asList(frame.getComponents()).forEach(this::updateComponent);
         }
 
-        if((c instanceof JComponent)) {
-            ((JComponent) c).setToolTipText(processKey(((JComponent) c).getToolTipText()));
-            Arrays.asList(((JComponent) c).getComponents()).forEach(this::updateComponent);
+        if(c instanceof JComponent comp) {
+            if(comp.getToolTipText() != null && !comp.getToolTipText().isEmpty()) {
+                comp.setToolTipText(processKey(comp.getToolTipText()));
+            }
+            Arrays.asList(comp.getComponents()).forEach(this::updateComponent);
         }
     }
 
     public static boolean hasKey(String key){
         int startIndex = key.indexOf("[") + 1;
         int endIndex = key.indexOf("]");
-        return endIndex != -1 && endIndex > startIndex;
+        return startIndex != -1 && endIndex != -1 && endIndex > startIndex;
     }
 
-    public static String getKey(String key){
+    public static String getKey(String key) {
         int startIndex = key.indexOf("[") + 1;
         int endIndex = key.indexOf("]");
 
-        if (endIndex != -1 && endIndex > startIndex) {
+        if(startIndex != -1 && endIndex != -1 && endIndex > startIndex) {
             return key.substring(startIndex, endIndex);
-        } else {
-            throw new IllegalArgumentException("There is no Lang[<key>] in the given parameter!");
+        } else{
+            return "undefined";
         }
     }
 }
