@@ -1,7 +1,7 @@
 # SwingLanguageSelector - Translate your Swing App into multiple languages
 With this library you can translate your frames and swing components to multiple languages, just using json files to save the translations.
 
-> Not all components and elements can be translated yet. [Click here to see all translatable elements]()
+> Not all components and elements can be translated yet. [Click here to see all translatable elements](https://github.com/SrBalbucio/SwingLanguageSelector/wiki/Translatable-Components)
 
 ### Motivation
 The main idea here is to enable developers to make their apps more accessible to different audiences by adding their native languages.

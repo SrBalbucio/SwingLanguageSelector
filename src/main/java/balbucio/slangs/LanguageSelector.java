@@ -10,28 +10,30 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import balbucio.slangs.frame.LanguageSelectFrame;
 import balbucio.slangs.model.Language;
+import balbucio.slangs.processor.Processor;
 import org.json.JSONObject;
 
 public class LanguageSelector {
 
     private CopyOnWriteArrayList<Component> components = new CopyOnWriteArrayList<>();
     private CopyOnWriteArrayList<Language> loadedLanguages = new CopyOnWriteArrayList<>();
+    private CopyOnWriteArrayList<Processor> processors = new CopyOnWriteArrayList<>();
     private String languageSelected;
 
     public LanguageSelector(String languageSelected) {
         this.languageSelected = languageSelected;
     }
 
-    public LanguageSelectFrame openSelectorFrame(){
+    public LanguageSelectFrame openSelectorFrame() {
         return new LanguageSelectFrame(this);
     }
 
-    public void setLanguage(String langId){
+    public void setLanguage(String langId) {
         this.languageSelected = langId;
         checkAndUpdate();
     }
 
-    public void addLanguage(String path){
+    public void addLanguage(String path) {
         loadedLanguages.add(new Language(path));
         checkAndUpdate();
     }
@@ -56,13 +58,18 @@ public class LanguageSelector {
         addComponent(component);
     }
 
-    public java.util.List<String> getLanguageNames(){
+    public void addProcessor(Processor processor){
+        processors.add(processor);
+        checkAndUpdate();
+    }
+
+    public java.util.List<String> getLanguageNames() {
         java.util.List<String> values = new ArrayList<>();
         loadedLanguages.forEach(l -> values.add(l.getName()));
         return values;
     }
 
-    public Language getLanguageByName(String name){
+    public Language getLanguageByName(String name) {
         return loadedLanguages.stream()
                 .filter(l -> l.getName().equalsIgnoreCase(name))
                 .findFirst().orElse(null);
@@ -80,28 +87,32 @@ public class LanguageSelector {
 
     public String processKey(String key) {
         if (hasLanguage(languageSelected) && (key != null && hasKey(key))) {
-            return getLanguage(languageSelected).optString(getKey(key),
+            String text = getLanguage(languageSelected).optString(getKey(key),
                     "unterminated field");
+            for (Processor processor : processors) {
+                text = text.replace(processor.getKey(), processor.replace(text));
+            }
+            return text;
         }
         return "unterminated language";
     }
 
     private void checkAndUpdate() {
-        if(hasLanguage(languageSelected)){
+        if (hasLanguage(languageSelected)) {
             Language lang = getLanguage(languageSelected);
-            if(!lang.isLoaded()){
+            if (!lang.isLoaded()) {
                 lang.load();
             }
         }
 
         components.forEach(c -> {
-                updateComponent(c);
+            updateComponent(c);
         });
     }
 
     private void updateComponent(Component c) {
 
-        if(c == null || !c.isValid()){
+        if (c == null || !c.isValid()) {
             return;
         }
 
@@ -111,19 +122,22 @@ public class LanguageSelector {
             button.setText(processKey(button.getText()));
         } else if (c instanceof JCheckBox check) {
             check.setText(processKey(check.getText()));
-        } else if(c instanceof JFrame frame){
+        } else if (c instanceof JFileChooser file) {
+            file.setApproveButtonText(processKey(file.getApproveButtonText()));
+        }
+        else if (c instanceof JFrame frame) {
             Arrays.asList(frame.getComponents()).forEach(this::updateComponent);
         }
 
-        if(c instanceof JComponent comp) {
-            if(comp.getToolTipText() != null && !comp.getToolTipText().isEmpty()) {
+        if (c instanceof JComponent comp) {
+            if (comp.getToolTipText() != null && !comp.getToolTipText().isEmpty()) {
                 comp.setToolTipText(processKey(comp.getToolTipText()));
             }
             Arrays.asList(comp.getComponents()).forEach(this::updateComponent);
         }
     }
 
-    public static boolean hasKey(String key){
+    public static boolean hasKey(String key) {
         int startIndex = key.indexOf("[") + 1;
         int endIndex = key.indexOf("]");
         return startIndex != -1 && endIndex != -1 && endIndex > startIndex;
@@ -133,9 +147,9 @@ public class LanguageSelector {
         int startIndex = key.indexOf("[") + 1;
         int endIndex = key.indexOf("]");
 
-        if(startIndex != -1 && endIndex != -1 && endIndex > startIndex) {
+        if (startIndex != -1 && endIndex != -1 && endIndex > startIndex) {
             return key.substring(startIndex, endIndex);
-        } else{
+        } else {
             return "undefined";
         }
     }
