@@ -29,8 +29,10 @@ public class LanguageSelector {
     }
 
     public void setLanguage(String langId) {
-        this.languageSelected = langId;
-        checkAndUpdate();
+        if (hasLanguage(langId)) {
+            this.languageSelected = langId;
+            checkAndUpdate();
+        }
     }
 
     public void addLanguage(String path) {
@@ -108,11 +110,19 @@ public class LanguageSelector {
         components.forEach(c -> {
             updateComponent(c);
         });
+
+        // descarrega as linguagens que não estão sendo usadas
+        loadedLanguages.stream()
+                .filter(l -> !languageSelected.equalsIgnoreCase(l.getId()) && l.isLoaded())
+                .forEach(l -> l.setJson(null));
     }
 
     private void updateComponent(Component c) {
 
         if (c == null || !c.isValid()) {
+            if (components.contains(c)) {
+                components.remove(c);
+            }
             return;
         }
 
