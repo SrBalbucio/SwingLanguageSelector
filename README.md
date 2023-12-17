@@ -1,4 +1,4 @@
-[![](https://img.shields.io/badge/HyperPowered-Use%20the%20official%20repository-yellow?color=%23279BF8&cacheSeconds=3600)](https://maven.hyperpowered.net/#/realeses/balbucio/slangs/SwingLanguageSelector)
+[![](https://img.shields.io/badge/HyperPowered-Use%20the%20official%20repository-yellow?color=%23279BF8&cacheSeconds=3600)](https://maven.hyperpowered.net/#/releases/balbucio/slangs/SwingLanguageSelector)
 # SwingLanguageSelector - Translate your Swing App into multiple languages
 With this library you can translate your frames and swing components to multiple languages, just using json files to save the translations.
 
