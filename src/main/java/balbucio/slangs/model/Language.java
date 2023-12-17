@@ -50,4 +50,9 @@ public class Language {
         return json.optString(key, def);
     }
 
+    public void setJson(JSONObject json){
+        this.json = json;
+        loaded = json != null;
+    }
+
 }
